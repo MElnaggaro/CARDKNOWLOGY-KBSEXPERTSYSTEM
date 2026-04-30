@@ -1,4 +1,4 @@
 experta>=1.9.4
-frozendict==1.2
+frozendict>=2.0.0
 flask>=3.0
 flask-cors>=4.0

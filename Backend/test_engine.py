@@ -1,4 +1,3 @@
-
 import sys
 import json
 sys.path.insert(0, '/home/elorgg/KKKK/KBS-WEB/Backend')

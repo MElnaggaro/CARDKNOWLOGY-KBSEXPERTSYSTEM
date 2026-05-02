@@ -115,3 +115,4 @@ class CHFRules:
             "Follow up with doctor and maintain medication compliance",
             "R18",
         )
+

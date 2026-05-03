@@ -14,6 +14,7 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 
 from engine.runner import run_diagnosis, get_input_schema
+from ai_agent.core.agent import CardKnowlogyAgent
 
 app = Flask(__name__)
 CORS(app)  # Enable CORS for all routes
@@ -247,6 +248,28 @@ def diagnose_categorized():
         }), 200
 
     return jsonify(result), 200
+
+
+@app.route("/chat", methods=["POST"])
+def chat():
+    """
+    Handle conversational requests using the AI Agent.
+    Accepts a JSON body with a 'message' field.
+    """
+    data = request.get_json()
+    if not data or "message" not in data:
+        return jsonify({"error": "No message provided"}), 400
+
+    user_message = data["message"]
+    
+    # Initialize agent (in a real app, you might retrieve this from a session)
+    agent = CardKnowlogyAgent()
+    
+    try:
+        response = agent.handle_request(user_message)
+        return jsonify(response), 200
+    except Exception as e:
+        return jsonify({"error": "Agent execution failed", "details": str(e)}), 500
 
 
 if __name__ == "__main__":

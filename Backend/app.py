@@ -13,7 +13,7 @@ CORS is enabled for frontend integration.
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 
-from engine.runner import run_diagnosis, get_input_schema
+from kbs.engine.runner import run_diagnosis, get_input_schema
 from ai_agent.core.agent import CardKnowlogyAgent
 
 app = Flask(__name__)
@@ -37,7 +37,7 @@ FIELD_MAP = {
 }
 
 # ─── Category lookup ───────────────────────────────────────────────────────────
-from engine.cf_config import SYMPTOM_CF, VITAL_CF, BACKGROUND_CF
+from kbs.engine.cf_config import SYMPTOM_CF, VITAL_CF, BACKGROUND_CF
 
 _SYMPTOMS = set(SYMPTOM_CF.keys())
 _VITALS = set(VITAL_CF.keys())

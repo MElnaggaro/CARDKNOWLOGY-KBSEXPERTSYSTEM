@@ -5,7 +5,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 import pytest
-from engine.runner import run_diagnosis
+from kbs.engine.runner import run_diagnosis
 
 #Test 1:This test checks whether the system can correctly produce a diagnosis when given strong, relevant symptoms.
 # purpose : Validates correctness of outputs 

@@ -1,8 +1,12 @@
-import sys
-import json
-sys.path.insert(0, '/home/elorgg/KKKK/KBS-WEB/Backend')
+import os
+from pathlib import Path
 
-from engine.runner import run_diagnosis
+# Add Backend directory to Python path dynamically
+backend_path = str(Path(__file__).parent.absolute())
+if backend_path not in sys.path:
+    sys.path.insert(0, backend_path)
+
+from kbs.engine.runner import run_diagnosis
 
 print("=" * 70)
 print("  DESIGN DOCUMENT EXAMPLE — CardKnowlogy Expert System")

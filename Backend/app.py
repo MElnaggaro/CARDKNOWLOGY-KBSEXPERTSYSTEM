@@ -13,7 +13,7 @@ CORS is enabled for frontend integration.
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 
-from engine.runner import run_diagnosis, get_input_schema
+from kbs.engine.runner import run_diagnosis, get_input_schema
 from ai_agent.core.agent import CardKnowlogyAgent
 
 app = Flask(__name__)
@@ -37,7 +37,7 @@ FIELD_MAP = {
 }
 
 # ─── Category lookup ───────────────────────────────────────────────────────────
-from engine.cf_config import SYMPTOM_CF, VITAL_CF, BACKGROUND_CF
+from kbs.engine.cf_config import SYMPTOM_CF, VITAL_CF, BACKGROUND_CF
 
 _SYMPTOMS = set(SYMPTOM_CF.keys())
 _VITALS = set(VITAL_CF.keys())
@@ -253,8 +253,8 @@ def diagnose_categorized():
 @app.route("/chat", methods=["POST"])
 def chat():
     """
-    Handle conversational requests using the AI Agent.
-    Accepts a JSON body with a 'message' field.
+    Backend API Orchestrator for CardKnowlogy React Frontend.
+    Ensures AI Agent logic integrates seamlessly with UI components.
     """
     data = request.get_json()
     if not data or "message" not in data:
@@ -262,14 +262,39 @@ def chat():
 
     user_message = data["message"]
     
-    # Initialize agent (in a real app, you might retrieve this from a session)
+    # Initialize the Agent (with persistent memory)
     agent = CardKnowlogyAgent()
     
     try:
-        response = agent.handle_request(user_message)
-        return jsonify(response), 200
+        # 1. Process the input through the CardKnowlogyAgent
+        raw_result = agent.handle_request(user_message)
+        
+        # 2. Format the output into a strictly structured JSON response
+        # 3. Ensure the urgency_level maps correctly to the frontend's CSS status
+        # 4. Maintain the memory_snapshot in the response
+        
+        structured_response = {
+            "primary_disease": raw_result.get("primary_disease", "Undetermined"),
+            "confidence_score": raw_result.get("confidence", 0.0),
+            "urgency_level": raw_result.get("urgency", "NORMAL"), # Frontend maps 'CRITICAL' to Red, etc.
+            "recommendation": raw_result.get("recommendation", "Please consult a medical professional."),
+            "conversational_explanation": raw_result.get("message", ""),
+            "memory_snapshot": raw_result.get("memory_snapshot", {}),
+            "metadata": {
+                "confidence_level": raw_result.get("confidence_level", "N/A"),
+                "fired_rules": raw_result.get("explanation", {}).get("fired_rules", []),
+                "timestamp": request.date if hasattr(request, 'date') else None
+            }
+        }
+        
+        return jsonify(structured_response), 200
+        
     except Exception as e:
-        return jsonify({"error": "Agent execution failed", "details": str(e)}), 500
+        return jsonify({
+            "error": "Agent execution failed", 
+            "details": str(e),
+            "status": "INTERNAL_SERVER_ERROR"
+        }), 500
 
 
 if __name__ == "__main__":

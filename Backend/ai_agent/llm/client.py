@@ -34,21 +34,31 @@ class LLMClient:
                 return json.dumps({"action": "error", "parameters": {"message": f"LLM Error: {str(e)}"}})
 
         # Smart Mock Logic for demonstration
-        print(f"DEBUG: [Mock LLM] Processing prompt...")
+        print(f"DEBUG: [Mock LLM] Processing assessment request...")
         
         prompt_lower = prompt.lower()
-        if "chest pain" in prompt_lower or "breath" in prompt_lower:
+        
+        # Check if we should call the KBS for assessment
+        if any(word in prompt_lower for word in ["chest pain", "breath", "fever", "cough", "fatigue", "diagnose", "assess"]):
+            # Extract symptoms from prompt (very basic extraction)
+            symptoms = {
+                "chest_pain": "chest pain" in prompt_lower,
+                "shortness_of_breath": "breath" in prompt_lower,
+                "fever": "fever" in prompt_lower,
+                "cough": "cough" in prompt_lower
+            }
+            # Remove False values to keep it clean
+            symptoms = {k: v for k, v in symptoms.items() if v}
+            
             return json.dumps({
                 "action": "call_kbs",
                 "parameters": {
-                    "symptoms": {
-                        "chest_pain": "chest pain" in prompt_lower,
-                        "shortness_of_breath": "breath" in prompt_lower
-                    }
+                    "symptoms": symptoms
                 }
             })
             
+        # Default conversational response
         return json.dumps({
             "action": "speak",
-            "parameters": {"message": "Hello! I am your CardKnowlogy assistant. How can I help you today?"}
+            "parameters": {"message": "I am the CardKnowlogy AI Agent. I can help assess your symptoms and keep track of your medical history without 'learning' from it (maintaining your privacy and data integrity)."}
         })

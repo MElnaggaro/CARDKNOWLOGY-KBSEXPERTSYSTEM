@@ -28,4 +28,7 @@ class AgentLoop:
         if "message" in result:
             self.agent.memory.add_message("agent", result["message"])
             
+        # Add memory snapshot for the UI/Report
+        result["memory_snapshot"] = self.agent.memory.get_all_facts()
+            
         return result

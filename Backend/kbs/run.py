@@ -15,14 +15,60 @@ from ai_agent.core.agent import CardKnowlogyAgent
 INPUT_FILE = BACKEND_DIR / "data" / "input.json"
 OUTPUT_FILE = BACKEND_DIR / "data" / "output.json"
 
+def print_pretty_result(result):
+    """Prints the result in the beautiful style of test_engine.py"""
+    print("\n" + "=" * 70)
+    print("  DIAGNOSIS REPORT — CardKnowlogy AI Agent")
+    print("=" * 70)
+    
+    # Handle Conversational Response
+    if "message" in result:
+        print(f"\n  [Agent Response]")
+        print(f"  {result['message']}")
+    
+    # Handle Diagnostic Data (if KBS tool was used)
+    if "primary_disease" in result:
+        print("\n  [Diagnostic Results]")
+        print("-" * 70)
+        print(f"  Inferred Disease  : {result.get('primary_disease', 'None')}")
+        print(f"  Confidence (CF)   : {result.get('confidence', 0.0)}")
+        print(f"  Confidence Level  : {result.get('confidence_level', 'N/A')}")
+        print(f"  Urgency Level     : {result.get('urgency', 'NORMAL')}")
+        print(f"  Recommendation    : {result.get('recommendation', 'No specific recommendation.')}")
+        
+        print("\n  [Reasoning & Explanation]")
+        print("-" * 70)
+        explanation = result.get('explanation', {})
+        fired_rules = explanation.get('fired_rules', [])
+        print(f"  Fired Rules       : {', '.join(fired_rules) if fired_rules else 'None'}")
+        
+        key_facts = explanation.get('key_facts', [])
+        if key_facts:
+            print(f"  Key Facts         :")
+            for fact in key_facts:
+                print(f"    • {fact}")
+                
+        print(f"  Clinical Notes    : {explanation.get('clinical_notes', 'N/A')}")
+        
+    if "disclaimer" in result:
+        print("\n" + "-" * 70)
+        print(f"  DISCLAIMER: {result['disclaimer']}")
+        
+    # Memory Status (Persistent Data)
+    print("\n  [Patient Memory Status]")
+    print("-" * 70)
+    print(f"  Status            : Data Kept (Persistent)")
+    print(f"  Historical Facts  : {list(result.get('memory_snapshot', {}).keys()) if 'memory_snapshot' in result else 'All current symptoms preserved'}")
+        
+    print("\n" + "=" * 70 + "\n")
+
 def main():
     """
     Main autonomous loop for the CardKnowlogy AI Agent.
-    Uses the full Agent core (LLM + Tools) to process input.
+    Prints professional reports to console and saves JSON to files.
     """
-    print("=== CardKnowlogy AI AGENT Started ===")
+    print("=== CardKnowlogy AI AGENT Professional Mode ===")
     print(f"Monitoring: {INPUT_FILE}")
-    print(f"Results will be in: {OUTPUT_FILE}")
     print("Press Ctrl+C to stop.")
 
     # Initialize the Agent
@@ -35,48 +81,50 @@ def main():
     # Ensure data directory exists
     INPUT_FILE.parent.mkdir(parents=True, exist_ok=True)
     
-    # Create input.json if it doesn't exist
-    if not INPUT_FILE.exists():
-        with open(INPUT_FILE, 'w') as f:
-            f.write('{"message": "I have chest pain and shortness of breath."}')
-        print(f"Created template input file at {INPUT_FILE}")
-
     while True:
         try:
-            # 1. Check for input
+            # 1. Check for file-based input (Autonomous Mode)
             input_data = parse_input_file(INPUT_FILE)
             
             if input_data:
-                print(f"\n[{time.strftime('%H:%M:%S')}] Detected input! AI Agent is thinking...")
-                
-                # Extract the message if it exists, otherwise use the whole JSON as context
+                print(f"\n[{time.strftime('%H:%M:%S')}] New file input detected! Thinking...")
                 user_input = input_data.get("message")
                 if not user_input:
-                    # If it's a raw symptoms dict, convert it to a string for the agent
                     user_input = f"Diagnose this data: {input_data}"
                 
-                # 2. Run the AI Agent (which will call the KBS engine as a tool)
+                # Run Agent
                 result = agent.handle_request(user_input)
+                print_pretty_result(result)
                 
-                # 3. Format and write output
                 format_output_file(result, OUTPUT_FILE)
-                
-                # 4. Clear input to signify completion
                 clear_input_file(INPUT_FILE)
-                
-                print(f"[{time.strftime('%H:%M:%S')}] Agent response saved. Waiting for next input.")
             
-            # 5. Sleep to prevent high CPU usage
-            time.sleep(2)
+            # 2. Support Interactive Mode (Manual Input)
+            else:
+                # Ask user if they want to enter something manually (optional)
+                # To keep it from blocking file monitoring too much, we'll use a short timeout
+                # or just provide a clear instruction.
+                print(f"\n[{time.strftime('%H:%M:%S')}] Waiting for input.json or type your message here (or 'exit'):")
+                user_input = input("> ").strip()
+                
+                if user_input.lower() in ['exit', 'quit']:
+                    print("Shutting down agent...")
+                    break
+                
+                if user_input:
+                    # Run Agent
+                    result = agent.handle_request(user_input)
+                    print_pretty_result(result)
+                    format_output_file(result, OUTPUT_FILE)
+
+            time.sleep(1)
             
         except KeyboardInterrupt:
             print("\nShutting down agent...")
             break
         except Exception as e:
-            print(f"An unexpected error occurred: {e}")
-            import traceback
-            traceback.print_exc()
-            time.sleep(5)
+            print(f"An error occurred: {e}")
+            time.sleep(2)
 
 if __name__ == "__main__":
     main()

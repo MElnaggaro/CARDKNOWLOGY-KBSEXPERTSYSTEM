@@ -1,0 +1,65 @@
+{
+    "latest_facts": {
+        "symptoms": {
+            "shortness_of_breath": true,
+            "chest_pain": true
+        },
+        "vitals": {},
+        "background": {}
+    },
+    "history": [
+        {
+            "timestamp": null,
+            "facts": {
+                "symptoms": {
+                    "shortness_of_breath": true
+                },
+                "vitals": {},
+                "background": {}
+            }
+        },
+        {
+            "timestamp": 1778041469.4890614,
+            "facts": {
+                "symptoms": {
+                    "shortness_of_breath": true
+                },
+                "vitals": {},
+                "background": {}
+            }
+        },
+        {
+            "timestamp": 1778041560.986578,
+            "facts": {
+                "symptoms": {
+                    "shortness_of_breath": true,
+                    "chest_pain": true
+                },
+                "vitals": {},
+                "background": {}
+            }
+        },
+        {
+            "timestamp": 1778041576.747868,
+            "facts": {
+                "symptoms": {
+                    "shortness_of_breath": true,
+                    "chest_pain": true
+                },
+                "vitals": {},
+                "background": {}
+            }
+        },
+        {
+            "timestamp": 1778041682.5594614,
+            "facts": {
+                "symptoms": {
+                    "shortness_of_breath": true,
+                    "chest_pain": true
+                },
+                "vitals": {},
+                "background": {}
+            }
+        }
+    ]
+}

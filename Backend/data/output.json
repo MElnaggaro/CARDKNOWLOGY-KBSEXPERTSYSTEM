@@ -1,0 +1,35 @@
+{
+    "timestamp": "2026-05-06T07:28:02.563033",
+    "status": "success",
+    "result": {
+        "primary_disease": "Acute Coronary Syndrome",
+        "confidence": 0.68,
+        "confidence_level": "Moderate",
+        "urgency": "HIGH",
+        "recommendation": "Seek urgent evaluation to rule out heart attack",
+        "explanation": {
+            "fired_rules": [
+                "R35",
+                "R39",
+                "R40"
+            ],
+            "key_facts": [
+                "chest_pain (CF=0.9)",
+                "shortness_of_breath (CF=0.8)"
+            ],
+            "all_conditions": {
+                "Acute Coronary Syndrome": 0.68
+            },
+            "clinical_notes": "Based on: chest_pain (CF=0.9), shortness_of_breath (CF=0.8)"
+        },
+        "disclaimer": "This system is designed to support early assessment and does not replace professional medical diagnosis or consultation with a cardiologist.",
+        "memory_snapshot": {
+            "symptoms": {
+                "shortness_of_breath": true,
+                "chest_pain": true
+            },
+            "vitals": {},
+            "background": {}
+        }
+    }
+}

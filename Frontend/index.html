@@ -522,6 +522,44 @@
                 </p>
             </div>
         </section>
+        <!-- ═══════════════════════════════════════════════ -->
+        <!-- AI ASSISTANT CHAT WIDGET                         -->
+        <!-- Floating chat interface for conversational AI    -->
+        <!-- ═══════════════════════════════════════════════ -->
+        <div id="chat-widget" class="chat-widget">
+            <div id="chat-toggle" class="chat-toggle">
+                <span class="chat-icon">💬</span>
+                <span class="chat-label">AI Assistant</span>
+            </div>
+            
+            <div id="chat-window" class="chat-window" style="display: none;">
+                <div class="chat-header">
+                    <div class="chat-header-info">
+                        <span class="chat-header-icon">🤖</span>
+                        <div class="chat-header-text">
+                            <strong>CardKnowlogy AI</strong>
+                            <span>Online</span>
+                        </div>
+                    </div>
+                    <button id="chat-close" class="chat-close">×</button>
+                </div>
+                
+                <div id="chat-messages" class="chat-messages">
+                    <div class="message assistant">
+                        Hello! I am your AI cardiac assistant. You can ask me about your symptoms or the expert system's results. How can I help you today?
+                    </div>
+                </div>
+                
+                <div class="chat-input-area">
+                    <input type="text" id="chat-input" placeholder="Type your symptoms or questions..." autocomplete="off">
+                    <button id="chat-send" class="chat-send">
+                        <svg viewBox="0 0 24 24" width="24" height="24">
+                            <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" fill="currentColor"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
     </main>
 
     <!-- Three.js & GSAP (CDN) -->
@@ -542,6 +580,7 @@
     <script type="module" src="JS/cursor.js"></script>
     <script src="JS/scroll-effects.js"></script>
     <script src="JS/api.js"></script>
+    <script src="JS/chat.js"></script>
     <script src="JS/script.js"></script>
 </body>
 </html>

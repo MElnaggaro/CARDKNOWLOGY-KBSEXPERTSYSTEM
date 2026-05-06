@@ -58,3 +58,31 @@ async function diagnose(payload) {
 
 	return data;
 }
+
+/**
+ * Send a message to the AI Agent (Conversational Mode).
+ * 
+ * @param {string} message - The user's natural language input.
+ * @returns {Promise<Object>} - The structured AI Agent response.
+ */
+async function chat(message) {
+	const url = `${API_BASE_URL}/chat`;
+
+	try {
+		const response = await fetch(url, {
+			method: "POST",
+			headers: { "Content-Type": "application/json" },
+			body: JSON.stringify({ message }),
+		});
+
+		const data = await response.json();
+
+		if (!response.ok) {
+			throw new Error(data.error || "Agent Error");
+		}
+
+		return data;
+	} catch (error) {
+		throw new Error("AI Agent connection failed: " + error.message);
+	}
+}
